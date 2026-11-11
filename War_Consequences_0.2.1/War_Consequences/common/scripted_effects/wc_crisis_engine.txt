@@ -1,0 +1,256 @@
+# WAR CONSEQUENCES 0.2
+# Les indices sont des scores internes 0-100. Ils ne sont pas des statistiques vanilla.
+# Les facteurs employés ci-dessous sont des déclencheurs vanilla documentés.
+# Les pertes humaines, pertes d'équipement, ravitaillement exact et pertes de divisions
+# ne sont pas exposés ici par un compteur universel suffisamment sûr : ils restent à faire.
+# Les usines perdues sont mesurées par rapport à wc_factories_base (début de guerre).
+
+wc_calculate_crisis_indices = {
+    set_variable = { var = wc_military_crisis value = 0 }
+    set_variable = { var = wc_economic_crisis value = 0 }
+    set_variable = { var = wc_political_crisis value = 0 }
+    set_variable = { var = wc_social_crisis value = 0 }
+    set_variable = { var = wc_territorial_crisis value = 0 }
+    set_variable = { var = wc_administrative_crisis value = 0 }
+
+    # Pression militaire : proximité de la capitulation, moral politique et occupation.
+    if = {
+        limit = { surrender_progress > 0.25 }
+        add_to_variable = { var = wc_military_crisis value = 20 }
+        add_to_variable = { var = wc_territorial_crisis value = 15 }
+    }
+    if = {
+        limit = { surrender_progress > 0.50 }
+        add_to_variable = { var = wc_military_crisis value = 20 }
+        add_to_variable = { var = wc_territorial_crisis value = 20 }
+        add_to_variable = { var = wc_administrative_crisis value = 15 }
+    }
+    if = {
+        limit = { surrender_progress > 0.75 }
+        add_to_variable = { var = wc_military_crisis value = 20 }
+        add_to_variable = { var = wc_territorial_crisis value = 25 }
+        add_to_variable = { var = wc_administrative_crisis value = 20 }
+    }
+
+    # Stabilité et soutien de guerre : vulnérabilité politique et sociale.
+    if = {
+        limit = { has_stability < 0.40 }
+        add_to_variable = { var = wc_political_crisis value = 20 }
+        add_to_variable = { var = wc_social_crisis value = 15 }
+        add_to_variable = { var = wc_administrative_crisis value = 10 }
+    }
+    if = {
+        limit = { has_stability < 0.25 }
+        add_to_variable = { var = wc_political_crisis value = 20 }
+        add_to_variable = { var = wc_social_crisis value = 20 }
+    }
+    if = {
+        limit = { has_war_support < 0.40 }
+        add_to_variable = { var = wc_military_crisis value = 10 }
+        add_to_variable = { var = wc_political_crisis value = 15 }
+        add_to_variable = { var = wc_social_crisis value = 20 }
+    }
+    if = {
+        limit = { has_war_support < 0.25 }
+        add_to_variable = { var = wc_military_crisis value = 10 }
+        add_to_variable = { var = wc_political_crisis value = 15 }
+        add_to_variable = { var = wc_social_crisis value = 15 }
+    }
+
+    # Territoire administré/perdu : nombre de régions occupées, sans seuil absolu de puissance.
+    if = {
+        limit = { num_occupied_states > 0 }
+        add_to_variable = { var = wc_territorial_crisis value = 10 }
+        add_to_variable = { var = wc_economic_crisis value = 5 }
+        add_to_variable = { var = wc_administrative_crisis value = 5 }
+    }
+    if = {
+        limit = { num_occupied_states > 4 }
+        add_to_variable = { var = wc_territorial_crisis value = 15 }
+        add_to_variable = { var = wc_economic_crisis value = 10 }
+        add_to_variable = { var = wc_administrative_crisis value = 10 }
+    }
+    if = {
+        limit = { num_occupied_states > 10 }
+        add_to_variable = { var = wc_territorial_crisis value = 15 }
+        add_to_variable = { var = wc_economic_crisis value = 15 }
+        add_to_variable = { var = wc_administrative_crisis value = 15 }
+    }
+    if = {
+        limit = { has_capitulated = yes }
+        add_to_variable = { var = wc_territorial_crisis value = 35 }
+        add_to_variable = { var = wc_political_crisis value = 25 }
+        add_to_variable = { var = wc_administrative_crisis value = 30 }
+    }
+
+    # Pertes industrielles réelles : usines au début de la guerre moins usines actuelles.
+    set_variable = { var = wc_factory_loss value = wc_factories_base }
+    subtract_from_variable = { var = wc_factory_loss value = num_of_factories }
+    if = {
+        limit = { check_variable = { var = wc_factory_loss value > 4 } }
+        add_to_variable = { var = wc_economic_crisis value = 15 }
+    }
+    if = {
+        limit = { check_variable = { var = wc_factory_loss value > 14 } }
+        add_to_variable = { var = wc_economic_crisis value = 20 }
+        add_to_variable = { var = wc_social_crisis value = 10 }
+    }
+    if = {
+        limit = { check_variable = { var = wc_factory_loss value > 29 } }
+        add_to_variable = { var = wc_economic_crisis value = 20 }
+    }
+
+    # Résilience générique par régime : réduit légèrement les scores, sans exceptions TAG.
+    if = {
+        limit = { has_government = fascism }
+        add_to_variable = { var = wc_social_crisis value = -5 }
+    }
+    if = {
+        limit = { has_government = communism }
+        add_to_variable = { var = wc_administrative_crisis value = -5 }
+    }
+    if = {
+        limit = { has_government = democratic }
+        add_to_variable = { var = wc_political_crisis value = -5 }
+    }
+    if = {
+        limit = { has_government = neutrality }
+        add_to_variable = { var = wc_military_crisis value = 5 }
+    }
+
+    clamp_variable = { var = wc_military_crisis min = 0 max = 100 }
+    clamp_variable = { var = wc_economic_crisis min = 0 max = 100 }
+    clamp_variable = { var = wc_political_crisis min = 0 max = 100 }
+    clamp_variable = { var = wc_social_crisis min = 0 max = 100 }
+    clamp_variable = { var = wc_territorial_crisis min = 0 max = 100 }
+    clamp_variable = { var = wc_administrative_crisis min = 0 max = 100 }
+}
+
+wc_evaluate_crisis_events = {
+    # Chaque bloc effectue son propre tirage : plusieurs familles compatibles peuvent tomber.
+    # Les drapeaux de cooldown et les verrous empêchent les répétitions/contradictions.
+
+    if = {
+        limit = {
+            check_variable = { var = wc_military_crisis value > 35 }
+            NOT = { has_country_flag = wc_military_cooldown }
+        }
+        random_list = {
+            10 = { country_event = { id = war_consequences.1 } }
+            90 = { }
+        }
+    }
+
+    if = {
+        limit = {
+            check_variable = { var = wc_economic_crisis value > 20 }
+            NOT = { has_country_flag = wc_economic_cooldown }
+        }
+        random_list = {
+            12 = { country_event = { id = war_consequences.2 } }
+            88 = { }
+        }
+    }
+
+    if = {
+        limit = {
+            check_variable = { var = wc_social_crisis value > 30 }
+            NOT = { has_country_flag = wc_social_cooldown }
+        }
+        random_list = {
+            12 = { country_event = { id = war_consequences.3 } }
+            88 = { }
+        }
+    }
+
+    if = {
+        limit = {
+            check_variable = { var = wc_territorial_crisis value > 35 }
+            NOT = { has_country_flag = wc_separatist_cooldown }
+            NOT = { has_country_flag = wc_civil_war_started }
+        }
+        random_list = {
+            8 = { country_event = { id = war_consequences.4 } }
+            92 = { }
+        }
+    }
+
+    if = {
+        limit = {
+            check_variable = { var = wc_political_crisis value > 45 }
+            surrender_progress > 0.25
+            NOT = { has_country_flag = wc_peace_cooldown }
+        }
+        random_list = {
+            10 = { country_event = { id = war_consequences.5 } }
+            90 = { }
+        }
+    }
+
+    if = {
+        limit = {
+            has_capitulated = yes
+            is_in_faction = yes
+            NOT = { has_country_flag = wc_exile_noted }
+        }
+        random_list = {
+            35 = { country_event = { id = war_consequences.6 } }
+            65 = { }
+        }
+    }
+
+    if = {
+        limit = {
+            check_variable = { var = wc_administrative_crisis value > 40 }
+            NOT = { has_country_flag = wc_admin_cooldown }
+        }
+        random_list = {
+            10 = { country_event = { id = war_consequences.7 } }
+            90 = { }
+        }
+    }
+
+    if = {
+        limit = {
+            check_variable = { var = wc_military_crisis value > 45 }
+            NOT = { has_country_flag = wc_mobilization_cooldown }
+            NOT = { has_country_flag = wc_general_mobilization_active }
+        }
+        random_list = {
+            8 = { country_event = { id = war_consequences.8 } }
+            92 = { }
+        }
+    }
+
+    if = {
+        limit = {
+            check_variable = { var = wc_political_crisis value > 75 }
+            has_stability < 0.20
+            NOT = { has_country_flag = wc_civil_war_started }
+            NOT = { has_capitulated = yes }
+        }
+        random_list = {
+            8 = { country_event = { id = war_consequences.9 } }
+            92 = { }
+        }
+    }
+}
+
+# Coup d'État : changement de régime réel via set_politics.
+# Déclenché seulement en cas de crise militaire et politique extrême avec stabilité quasi nulle.
+wc_evaluate_coup = {
+    if = {
+        limit = {
+            check_variable = { var = wc_military_crisis value > 55 }
+            check_variable = { var = wc_political_crisis value > 65 }
+            has_stability < 0.15
+            NOT = { has_country_flag = wc_coup_cooldown }
+            NOT = { has_country_flag = wc_civil_war_started }
+            NOT = { has_capitulated = yes }
+        }
+        random_list = {
+            10 = { country_event = { id = war_consequences.10 } }
+            90 = { }
+        }
+    }
+}

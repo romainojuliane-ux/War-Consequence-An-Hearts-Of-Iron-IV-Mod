@@ -1,0 +1,226 @@
+add_namespace = war_consequences
+
+country_event = {
+    id = war_consequences.1
+    title = war_consequences.1.t
+    desc = war_consequences.1.d
+    is_triggered_only = yes
+    immediate = { set_country_flag = { flag = wc_military_cooldown days = 90 } }
+    option = {
+        name = war_consequences.1.a
+        add_timed_idea = { idea = wc_military_disorder days = 90 }
+        add_war_support = -0.03
+    }
+    option = {
+        name = war_consequences.1.b
+        add_political_power = -35
+        add_stability = -0.03
+        add_timed_idea = { idea = wc_military_disorder days = 45 }
+    }
+}
+
+country_event = {
+    id = war_consequences.2
+    title = war_consequences.2.t
+    desc = war_consequences.2.d
+    is_triggered_only = yes
+    immediate = { set_country_flag = { flag = wc_economic_cooldown days = 90 } }
+    option = {
+        name = war_consequences.2.a
+        add_timed_idea = { idea = wc_factory_disruption days = 120 }
+        add_political_power = -20
+    }
+    option = {
+        name = war_consequences.2.b
+        add_stability = -0.04
+        add_war_support = -0.02
+    }
+}
+
+country_event = {
+    id = war_consequences.3
+    title = war_consequences.3.t
+    desc = war_consequences.3.d
+    is_triggered_only = yes
+    immediate = { set_country_flag = { flag = wc_social_cooldown days = 90 } }
+    option = {
+        name = war_consequences.3.a
+        add_timed_idea = { idea = wc_public_unrest days = 90 }
+        add_stability = -0.03
+    }
+    option = {
+        name = war_consequences.3.b
+        add_political_power = -40
+        add_stability = 0.02
+        add_war_support = -0.04
+    }
+}
+
+country_event = {
+    id = war_consequences.4
+    title = war_consequences.4.t
+    desc = war_consequences.4.d
+    is_triggered_only = yes
+    immediate = { set_country_flag = { flag = wc_separatist_cooldown days = 180 } }
+    option = {
+        name = war_consequences.4.a
+        add_timed_idea = { idea = wc_separatist_pressure days = 180 }
+        add_stability = -0.05
+    }
+    option = {
+        name = war_consequences.4.b
+        add_political_power = -50
+        add_stability = 0.01
+        add_war_support = -0.03
+    }
+}
+
+country_event = {
+    id = war_consequences.5
+    title = war_consequences.5.t
+    desc = war_consequences.5.d
+    is_triggered_only = yes
+    immediate = { set_country_flag = { flag = wc_peace_cooldown days = 180 } }
+    option = {
+        name = war_consequences.5.a
+        add_timed_idea = { idea = wc_peace_pressure days = 120 }
+        add_stability = -0.03
+        add_war_support = -0.05
+    }
+    option = {
+        name = war_consequences.5.b
+        add_stability = -0.04
+        add_political_power = -35
+        add_war_support = 0.02
+    }
+}
+
+country_event = {
+    id = war_consequences.6
+    title = war_consequences.6.t
+    desc = war_consequences.6.d
+    is_triggered_only = yes
+    immediate = { set_country_flag = wc_exile_noted }
+    option = {
+        name = war_consequences.6.a
+        add_timed_idea = { idea = wc_exile_government days = 180 }
+        add_political_power = -25
+    }
+    option = {
+        name = war_consequences.6.b
+        add_timed_idea = { idea = wc_exile_government days = 90 }
+        add_war_support = 0.03
+    }
+}
+
+country_event = {
+    id = war_consequences.7
+    title = war_consequences.7.t
+    desc = war_consequences.7.d
+    is_triggered_only = yes
+    immediate = { set_country_flag = { flag = wc_admin_cooldown days = 120 } }
+    option = {
+        name = war_consequences.7.a
+        add_timed_idea = { idea = wc_admin_breakdown days = 120 }
+        add_stability = -0.04
+    }
+    option = {
+        name = war_consequences.7.b
+        add_political_power = -50
+        add_stability = -0.02
+    }
+}
+
+country_event = {
+    id = war_consequences.8
+    title = war_consequences.8.t
+    desc = war_consequences.8.d
+    is_triggered_only = yes
+    immediate = {
+        set_country_flag = wc_general_mobilization_active
+        set_country_flag = { flag = wc_mobilization_cooldown days = 180 }
+    }
+    option = {
+        name = war_consequences.8.a
+        add_timed_idea = { idea = wc_general_mobilization days = 180 }
+        add_war_support = 0.05
+    }
+    option = {
+        name = war_consequences.8.b
+        add_timed_idea = { idea = wc_general_mobilization days = 90 }
+        add_stability = -0.02
+    }
+}
+
+# Cette crise déclenche une vraie guerre civile vanilla : le pays rebelle est créé dynamiquement
+# par le moteur du jeu. Les choix disponibles dépendent du régime en place.
+country_event = {
+    id = war_consequences.9
+    title = war_consequences.9.t
+    desc = war_consequences.9.d
+    is_triggered_only = yes
+    immediate = {
+        set_country_flag = { flag = wc_civil_war_started days = 3650 }
+        set_country_flag = { flag = wc_civil_war_cooldown days = 730 }
+    }
+    option = {
+        name = war_consequences.9.a
+        trigger = { has_government = democratic }
+        ai_chance = { factor = 1 }
+        start_civil_war = { ideology = communism size = 0.25 }
+    }
+    option = {
+        name = war_consequences.9.b
+        trigger = { has_government = fascism }
+        ai_chance = { factor = 1 }
+        start_civil_war = { ideology = democratic size = 0.25 }
+    }
+    option = {
+        name = war_consequences.9.c
+        trigger = { has_government = communism }
+        ai_chance = { factor = 1 }
+        start_civil_war = { ideology = democratic size = 0.25 }
+    }
+    option = {
+        name = war_consequences.9.d
+        trigger = { has_government = neutrality }
+        ai_chance = { factor = 1 }
+        start_civil_war = { ideology = communism size = 0.25 }
+    }
+    option = {
+        name = war_consequences.9.e
+        trigger = { NOT = { has_government = democratic has_government = fascism has_government = communism has_government = neutrality } }
+        ai_chance = { factor = 0 }
+        add_stability = -0.10
+        add_war_support = -0.05
+    }
+}
+
+# Coup d'État : change réellement le régime au pouvoir (set_politics).
+country_event = {
+    id = war_consequences.10
+    title = war_consequences.10.t
+    desc = war_consequences.10.d
+    is_triggered_only = yes
+    immediate = { set_country_flag = { flag = wc_coup_cooldown days = 730 } }
+    option = {
+        name = war_consequences.10.a
+        trigger = { NOT = { has_government = fascism } }
+        set_politics = { ruling_party = fascism elections_allowed = no }
+        add_stability = 0.05
+        add_timed_idea = { idea = wc_coup_aftermath days = 120 }
+    }
+    option = {
+        name = war_consequences.10.b
+        trigger = { NOT = { has_government = democratic } }
+        set_politics = { ruling_party = democratic elections_allowed = no }
+        add_stability = 0.05
+        add_timed_idea = { idea = wc_coup_aftermath days = 120 }
+    }
+    option = {
+        name = war_consequences.10.c
+        add_political_power = -50
+        add_stability = -0.05
+        add_timed_idea = { idea = wc_military_disorder days = 90 }
+    }
+}

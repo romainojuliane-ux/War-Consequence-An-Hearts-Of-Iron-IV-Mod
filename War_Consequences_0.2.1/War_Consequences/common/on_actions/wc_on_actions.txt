@@ -1,0 +1,38 @@
+on_actions = {
+    # on_daily est exécuté dans le scope de chaque pays.
+    # Le compteur local déclenche une évaluation tous les trois jours de guerre.
+    on_daily = {
+        effect = {
+            if = {
+                limit = {
+                    has_war = yes
+                    NOT = { has_country_flag = wc_disabled }
+                }
+                if = {
+                    limit = { NOT = { has_variable = wc_day_counter } }
+                    set_variable = { var = wc_day_counter value = 0 }
+                }
+                # Référence d'usines au début de la guerre, pour mesurer les pertes réelles.
+                if = {
+                    limit = { NOT = { has_variable = wc_factories_base } }
+                    set_variable = { var = wc_factories_base value = num_of_factories }
+                }
+                add_to_variable = { var = wc_day_counter value = 1 }
+                if = {
+                    limit = { check_variable = { var = wc_day_counter value = 3 } }
+                    set_variable = { var = wc_day_counter value = 0 }
+                    wc_calculate_crisis_indices = yes
+                    wc_evaluate_crisis_events = yes
+                    wc_evaluate_coup = yes
+                }
+            }
+            else = {
+                if = {
+                    limit = { has_variable = wc_day_counter }
+                    set_variable = { var = wc_day_counter value = 0 }
+                }
+                clear_variable = wc_factories_base
+            }
+        }
+    }
+}
